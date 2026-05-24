@@ -2,14 +2,18 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
+const fs = require("fs");
+const OpenAI = require("openai");
 const mongoose = require("mongoose");
+const connectDB = require("./config/db");
+require("dotenv").config();
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect("mongodb://Khushiverma04:Khushi1234@ac-m3jpjux-shard-00-00.ek01jtn.mongodb.net:27017,ac-m3jpjux-shard-00-01.ek01jtn.mongodb.net:27017,ac-m3jpjux-shard-00-02.ek01jtn.mongodb.net:27017/?ssl=true&replicaSet=atlas-s8fkos-shard-0&authSource=admin&appName=Cluster0")
   .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log("DB Error:", err));
+  .catch((err) => console.log(err));
 
 const app = express();
-
+connectDB();
 app.use(cors());
 
 const PORT = 5000;
@@ -37,8 +41,8 @@ app.get("/", (req, res) => {
   res.send("Backend Running 🚀");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log("Server running on port", process.env.PORT);
 });
 
 app.post("/upload", upload.single("file"), (req, res) => {
@@ -50,4 +54,40 @@ app.post("/upload", upload.single("file"), (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Upload failed" });
   }
+});
+
+app.listen(process.env.port, () => {
+  console.log("server running on port",
+    process.env.PORT);
+});
+
+// 🔑 OpenAI API key yahan paste karo
+const openai = new OpenAI({
+  apiKey: "sk-proj-RwhOpoMlcFj_AvobEDWASanpO",
+});
+
+// 🎤 Speech to Text API route
+app.post("/transcribe", upload.single("audio"), async (req, res) => {
+  try {
+    const audioPath = req.file.path;
+
+    const transcription = await openai.audio.transcriptions.create({
+      file: fs.createReadStream(audioPath),
+      model: "whisper-1",
+    });
+
+    res.json({
+      text: transcription.text,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+// 🚀 server start
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
