@@ -1,5 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import axios from "axios";
+
+const App = () => {
+
+  const [history, setHistory] = useState([]);
+
+  const fetchHistory = async () => {
+  
+  };
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  return (
+    <div>
+
+      {/* existing UI */}
+
+      <h2>Previous Transcriptions</h2>
+
+      {history.map((item) => (
+        <div key={item._id}>
+          <p>{item.text}</p>
+        </div>
+      ))}
+
+    </div>
+  );
+};
 
 function App() {
 

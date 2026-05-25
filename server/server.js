@@ -6,6 +6,7 @@ const fs = require("fs");
 const OpenAI = require("openai");
 const mongoose = require("mongoose");
 const connectDB = require("./config/db");
+const Transcription = require("./models/Transcription");
 require("dotenv").config();
 
 mongoose.connect("mongodb://Khushiverma04:Khushi1234@ac-m3jpjux-shard-00-00.ek01jtn.mongodb.net:27017,ac-m3jpjux-shard-00-01.ek01jtn.mongodb.net:27017,ac-m3jpjux-shard-00-02.ek01jtn.mongodb.net:27017/?ssl=true&replicaSet=atlas-s8fkos-shard-0&authSource=admin&appName=Cluster0")
@@ -42,8 +43,24 @@ app.post("/upload", upload.single("audio"), (req, res) => {
 });
 
 // Test Route
+
 app.get("/", (req, res) => {
   res.send("Backend Running 🚀");
+});
+
+app.get("/transcriptions", async (req, res) => {
+  try {
+    const data = await Transcription.find().sort({
+      createdAt: -1,
+    });
+
+    res.json(data);
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
 });
 
 app.listen(process.env.PORT, () => {
@@ -79,6 +96,10 @@ app.post("/transcribe", upload.single("audio"), async (req, res) => {
     const transcription = await openai.audio.transcriptions.create({
       file: fs.createReadStream(audioPath),
       model: "whisper-1",
+    });
+
+    const savedText = await Transcription.create({
+      text: transcription.text, 
     });
 
     res.json({
