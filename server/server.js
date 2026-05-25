@@ -16,8 +16,6 @@ const app = express();
 connectDB();
 app.use(cors());
 
-const PORT = 5000;
-
 // Multer Storage Setup
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -30,6 +28,13 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+app.post("/transcribe", upload.single("audio"), async (req, res) => {
+
+});
+
+
+const PORT = 5000;
 
 // Upload API
 app.post("/upload", upload.single("audio"), (req, res) => {
@@ -90,4 +95,8 @@ app.post("/transcribe", upload.single("audio"), async (req, res) => {
 // 🚀 server start
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+const client = new OpenAI({
+  apiKey: process.env.OpenAI_API_KEY,
 });
