@@ -1,38 +1,10 @@
 import { useState, useEffect} from "react";
 import axios from "axios";
 
-const App = () => {
-
-  const [history, setHistory] = useState([]);
-
-  const fetchHistory = async () => {
-  
-  };
-
-  useEffect(() => {
-    fetchHistory();
-  }, []);
-
-  return (
-    <div>
-
-      {/* existing UI */}
-
-      <h2>Previous Transcriptions</h2>
-
-      {history.map((item) => (
-        <div key={item._id}>
-          <p>{item.text}</p>
-        </div>
-      ))}
-
-    </div>
-  );
-};
-
 function App() {
 
   const [text, setText] = useState("");
+  const [history, setHistory] = useState([]);
   const [recording, setRecording] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -59,6 +31,7 @@ function App() {
       );
 
       setText(res.data.transcription);
+      setHistory((prev) => [...prev, res.data.transcription]);
 
     } catch (error) {
 
@@ -137,7 +110,7 @@ function App() {
 
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
 
-      <h1 className="text-3xl font-bold mb-6">
+      <h1 className="text-4xl font-bold text-blue-600 mb-6">
         🎤 Speech to Text App
       </h1>
 
@@ -146,7 +119,7 @@ function App() {
         type="file"
         accept="audio/*"
         onChange={handleFileUpload}
-        className="mb-4"
+        className="mb-4 p-2 border rounded-lg bg-white shadow"
       />
 
       {/* 🎤 Record */}
@@ -154,7 +127,7 @@ function App() {
 
         <button
           onClick={startRecording}
-          className="bg-green-500 text-white px-4 py-2 rounded mb-2"
+         className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg mb-2 transition duration-300"
         >
           Start Recording
         </button>
@@ -163,7 +136,7 @@ function App() {
 
         <button
           onClick={stopRecording}
-          className="bg-red-500 text-white px-4 py-2 rounded mb-2"
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg mb-2 transition duration-300"
         >
           Stop Recording
         </button>
@@ -176,15 +149,34 @@ function App() {
       )}
 
       {/* 📝 Output */}
-      <div className="mt-6 bg-white p-4 rounded shadow w-full max-w-xl">
+      <div className="mt-6 bg-white p-6 rounded-2xl shadow-lg w-full max-w-xl">
 
-        <h2 className="font-semibold mb-2">
+        <h2 className="text-2xl font-semibold mb-3 text-gray-700">
           Transcription:
         </h2>
 
         <p>{text}</p>
 
       </div>
+
+      <div className="mt-6 w-full max-w-xl">
+
+  <h2 className="text-2xl font-bold mb-4 text-gray-700">
+    History
+  </h2>
+
+  {history.map((item, index) => (
+
+    <div
+      key={index}
+      className="bg-white p-4 rounded-xl shadow-md mb-3"
+    >
+      {item}
+    </div>
+
+  ))}
+
+  </div>
 
     </div>
   );
