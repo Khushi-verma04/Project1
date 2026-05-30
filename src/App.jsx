@@ -105,7 +105,7 @@ function App() {
 
     const formData = new FormData();
     formData.append("audio", file, file.name);
-
+    
     try {
       const res = await axios.post(
         "https://speech-to-text-app-l4di.onrender.com/transcribe",
