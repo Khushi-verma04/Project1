@@ -108,7 +108,7 @@ function App() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/transcribe",
+        "https://speech-to-text-app-l4di.onrender.com/transcribe",
         formData,
         {
           headers: {
